@@ -1,11 +1,98 @@
 package chat;
 
+import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class chatServer extends javax.swing.JFrame {
 
     ArrayList clientOutputStreams;
     ArrayList<String> users = new ArrayList();
+    
+    public class ClientHandler implements Runnable{
+       BufferedReader reader;
+       Socket sock;
+       PrintWriter client;
+
+       public ClientHandler(Socket clientSocket, PrintWriter user){
+            client = user;
+            try{
+                sock = clientSocket;
+                InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
+                reader = new BufferedReader(isReader);
+            }
+            catch (Exception ex) 
+            {
+                serverTextArea.append("Unexpected error... \n");
+            }
+
+       }
+
+       @Override
+       public void run() 
+       {
+            String message, connect = "Connect", disconnect = "Disconnect", chat = "Chat" ;
+            String[] data;
+
+            try{
+                while ((message = reader.readLine()) != null){
+                    serverTextArea.append("Received: " + message + "\n");
+                    data = message.split(":");
+                    
+                    for (String token:data){
+                        serverTextArea.append(token + "\n");
+                    }
+                    
+                    if (data[2].equals(connect)){
+                        tellEveryone((data[0] + ":" + data[1] + ":" + chat));
+                        addUser(data[0]);
+                    } else if (data[2].equals(disconnect)){
+                        tellEveryone((data[0] + ":has disconnected." + ":" + chat));
+                        removeUser(data[0]);
+                    } else if (data[2].equals(chat)){
+                        tellEveryone(message);
+                    } else {
+                        serverTextArea.append("No Conditions were met. \n");
+                    }
+                } 
+             } catch (Exception ex){
+                serverTextArea.append("Lost a connection. \n");
+                ex.printStackTrace();
+                clientOutputStreams.remove(client);
+             } 
+	} 
+    }
+    
+    public class ServerStart implements Runnable{
+            @Override
+            public void run(){
+                clientOutputStreams = new ArrayList();
+                try{
+                    ServerSocket serverSock = new ServerSocket(1111);
+                    while(true){
+                                    Socket clientSock = serverSock.accept();
+                                    PrintWriter writer = new PrintWriter(clientSock.getOutputStream());
+                                    clientOutputStreams.add(writer);
+
+                                    Thread listener = new Thread(new ClientHandler(clientSock, writer));
+                                    listener.start();
+                                    serverTextArea.append("Got a connection. \n");
+                    }
+                }catch (Exception ex){
+                    serverTextArea.append("Error making a connection. \n");
+                }
+            }
+    }
+    
+    public void addUser(String user){
+        users.add(user);
+    }
+    
+    public void removeUser(String user){
+        users.remove(user);
+        serverTextArea.append("User "+user+"disconnected...");
+    }
     
     public void writeUsers(){
         String[] tempList = new String[(users.size())];
@@ -15,8 +102,25 @@ public class chatServer extends javax.swing.JFrame {
                 serverTextArea.append(user);
             }
         } else {
-            serverTextArea.append("No users online.");
+            serverTextArea.append("No users online.\n");
         }
+    }
+    
+    public void tellEveryone(String message){
+	Iterator it = clientOutputStreams.iterator();
+
+        while (it.hasNext()){
+            try{
+                PrintWriter writer = (PrintWriter) it.next();
+		writer.println(message);
+		serverTextArea.append("Sending: " + message + "\n");
+                writer.flush();
+                serverTextArea.setCaretPosition(serverTextArea.getDocument().getLength());
+
+            } catch (Exception ex){
+		serverTextArea.append("Error telling everyone. \n");
+            }
+        } 
     }
    
     /**

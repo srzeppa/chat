@@ -14,15 +14,6 @@ import java.util.ArrayList;
 public class chatClient extends javax.swing.JFrame {
     
     ArrayList<String> users = new ArrayList();
-    
-    public void addUser(String user){
-        users.add(user);
-    }
-    
-    public void removeUser(String user){
-        users.remove(user);
-        chatTextArea.append("User "+user+"disconnected...");
-    }
 
     /**
      * Creates new form chatClient
