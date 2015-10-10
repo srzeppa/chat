@@ -73,13 +73,13 @@ public class chatServer extends javax.swing.JFrame {
                 try{
                     ServerSocket serverSock = new ServerSocket(1111);
                     while(true){
-                                    Socket clientSock = serverSock.accept();
-                                    PrintWriter writer = new PrintWriter(clientSock.getOutputStream());
-                                    clientOutputStreams.add(writer);
+                        Socket clientSock = serverSock.accept();
+                        PrintWriter writer = new PrintWriter(clientSock.getOutputStream());
+                        clientOutputStreams.add(writer);
 
-                                    Thread listener = new Thread(new ClientHandler(clientSock, writer));
-                                    listener.start();
-                                    serverTextArea.append("Got a connection. \n");
+                        Thread listener = new Thread(new ClientHandler(clientSock, writer));
+                        listener.start();
+                        serverTextArea.append("Got a connection. \n");
                     }
                 }catch (Exception ex){
                     serverTextArea.append("Error making a connection. \n");
@@ -227,7 +227,7 @@ public class chatServer extends javax.swing.JFrame {
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
         try {
             // TODO add your handling code here:
-            Thread.sleep(500);
+            Thread.sleep(5000);
         } catch (InterruptedException ex) {
             Logger.getLogger(chatServer.class.getName()).log(Level.SEVERE, null, ex);
             serverTextArea.append("Server cant be stopped");
