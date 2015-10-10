@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class chatServer extends javax.swing.JFrame {
 
@@ -108,7 +110,6 @@ public class chatServer extends javax.swing.JFrame {
     
     public void tellEveryone(String message){
 	Iterator it = clientOutputStreams.iterator();
-
         while (it.hasNext()){
             try{
                 PrintWriter writer = (PrintWriter) it.next();
@@ -158,8 +159,18 @@ public class chatServer extends javax.swing.JFrame {
         });
 
         startButton.setText("Start");
+        startButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startButtonActionPerformed(evt);
+            }
+        });
 
         stopButton.setText("Stop");
+        stopButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stopButtonActionPerformed(evt);
+            }
+        });
 
         serverTextArea.setColumns(20);
         serverTextArea.setRows(5);
@@ -205,34 +216,27 @@ public class chatServer extends javax.swing.JFrame {
         writeUsers();
     }//GEN-LAST:event_onlineUsersButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(chatServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(chatServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(chatServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(chatServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
+        // TODO add your handling code here:
+        Thread starter = new Thread(new ServerStart());
+        starter.start();
+        
+        serverTextArea.append("Server started...\n");
+    }//GEN-LAST:event_startButtonActionPerformed
 
-        /* Create and display the form */
+    private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
+        try {
+            // TODO add your handling code here:
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(chatServer.class.getName()).log(Level.SEVERE, null, ex);
+            serverTextArea.append("Server cant be stopped");
+        }
+        tellEveryone("Server:is stopping and all users will be disconnected.\n:Chat");
+        serverTextArea.append("Server stopping... \n");
+    }//GEN-LAST:event_stopButtonActionPerformed
+
+    public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new chatServer().setVisible(true);
