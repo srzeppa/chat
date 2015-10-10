@@ -5,11 +5,24 @@
  */
 package chat;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author mint
  */
 public class chatClient extends javax.swing.JFrame {
+    
+    ArrayList<String> users = new ArrayList();
+    
+    public void addUser(String user){
+        users.add(user);
+    }
+    
+    public void removeUser(String user){
+        users.remove(user);
+        chatTextArea.append("User "+user+"disconnected...");
+    }
 
     /**
      * Creates new form chatClient
@@ -27,7 +40,6 @@ public class chatClient extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
         loginLabel = new javax.swing.JLabel();
         portLabel = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -42,6 +54,8 @@ public class chatClient extends javax.swing.JFrame {
         sendButton = new javax.swing.JButton();
         connectButton = new javax.swing.JButton();
         disconnectButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        chatTextArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -67,15 +81,19 @@ public class chatClient extends javax.swing.JFrame {
 
         disconnectButton.setText("Disconnect");
 
+        chatTextArea.setColumns(20);
+        chatTextArea.setRows(5);
+        jScrollPane1.setViewportView(chatTextArea);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(loginLabel)
                         .addGap(15, 15, 15)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -87,11 +105,11 @@ public class chatClient extends javax.swing.JFrame {
                         .addComponent(portLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane5)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(disconnectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -162,6 +180,7 @@ public class chatClient extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextPane adressTextPanel;
+    private javax.swing.JTextArea chatTextArea;
     private javax.swing.JButton connectButton;
     private javax.swing.JButton disconnectButton;
     private javax.swing.JLabel jLabel2;

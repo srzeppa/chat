@@ -1,16 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package chat;
 
-/**
- *
- * @author mint
- */
+import java.util.ArrayList;
+
 public class chatServer extends javax.swing.JFrame {
 
+    ArrayList clientOutputStreams;
+    ArrayList<String> users = new ArrayList();
+    
+    public void writeUsers(){
+        String[] tempList = new String[(users.size())];
+        users.toArray(tempList);
+        if(!users.isEmpty()){
+            for(String user : users){
+                serverTextArea.append(user);
+            }
+        } else {
+            serverTextArea.append("No users online.");
+        }
+    }
+   
     /**
      * Creates new form chatServer
      */
@@ -29,19 +37,29 @@ public class chatServer extends javax.swing.JFrame {
 
         clearButton = new javax.swing.JButton();
         onlineUsersButton = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
         startButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        serverTextArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         clearButton.setText("Clear");
 
         onlineUsersButton.setText("Online users");
+        onlineUsersButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onlineUsersButtonActionPerformed(evt);
+            }
+        });
 
         startButton.setText("Start");
 
         stopButton.setText("Stop");
+
+        serverTextArea.setColumns(20);
+        serverTextArea.setRows(5);
+        jScrollPane1.setViewportView(serverTextArea);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -49,8 +67,8 @@ public class chatServer extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -58,15 +76,16 @@ public class chatServer extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(clearButton)
                     .addComponent(onlineUsersButton)
@@ -77,6 +96,10 @@ public class chatServer extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void onlineUsersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onlineUsersButtonActionPerformed
+        writeUsers();
+    }//GEN-LAST:event_onlineUsersButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -115,8 +138,9 @@ public class chatServer extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton clearButton;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton onlineUsersButton;
+    private javax.swing.JTextArea serverTextArea;
     private javax.swing.JButton startButton;
     private javax.swing.JButton stopButton;
     // End of variables declaration//GEN-END:variables
