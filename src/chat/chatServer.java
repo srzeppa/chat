@@ -30,8 +30,6 @@ public class chatServer extends javax.swing.JFrame {
         clearButton = new javax.swing.JButton();
         onlineUsersButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        portLabel = new javax.swing.JLabel();
-        portTextField = new javax.swing.JTextField();
         startButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
 
@@ -40,8 +38,6 @@ public class chatServer extends javax.swing.JFrame {
         clearButton.setText("Clear");
 
         onlineUsersButton.setText("Online users");
-
-        portLabel.setText("Port:");
 
         startButton.setText("Start");
 
@@ -53,7 +49,7 @@ public class chatServer extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -62,24 +58,18 @@ public class chatServer extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(portLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(clearButton)
                     .addComponent(onlineUsersButton)
-                    .addComponent(portLabel)
-                    .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(startButton)
                     .addComponent(stopButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -127,8 +117,6 @@ public class chatServer extends javax.swing.JFrame {
     private javax.swing.JButton clearButton;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton onlineUsersButton;
-    private javax.swing.JLabel portLabel;
-    private javax.swing.JTextField portTextField;
     private javax.swing.JButton startButton;
     private javax.swing.JButton stopButton;
     // End of variables declaration//GEN-END:variables

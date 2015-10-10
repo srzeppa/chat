@@ -25,7 +25,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="jScrollPane2" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="clearButton" min="-2" pref="100" max="-2" attributes="0"/>
@@ -35,13 +35,9 @@
                       <Component id="startButton" min="-2" pref="100" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="stopButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="portLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="portTextField" min="-2" pref="70" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -49,13 +45,11 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane2" min="-2" pref="375" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane2" min="-2" pref="369" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="clearButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="onlineUsersButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="portLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="portTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="startButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="stopButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
@@ -79,13 +73,6 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
     </Container>
-    <Component class="javax.swing.JLabel" name="portLabel">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Port:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="portTextField">
-    </Component>
     <Component class="javax.swing.JButton" name="startButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Start"/>
