@@ -119,6 +119,9 @@
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="portTextPanel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="1111"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
@@ -130,6 +133,9 @@
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="adressTextPanel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="localhost"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

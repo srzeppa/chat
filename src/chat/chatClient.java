@@ -2,30 +2,46 @@ package chat;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class chatClient extends javax.swing.JFrame {
     
     ArrayList<String> users = new ArrayList();
-    String address;
-    int port;
+    String address = "localhost";
+    int port = 1111;
     PrintWriter writer;
     Socket sock;
-    Reader reader;
+    BufferedReader reader;
+    
+    public void ListenThread(){
+        Thread IncomingReader = new Thread(new IncomingReader());
+        IncomingReader.start();
+    }
 
     public void userAdd(String user){
          users.add(user);
     }
     
-    //--------------------------//
-    
     public void userRemove(String user){
          chatTextArea.append(user + " is now offline.\n");
+    }
+    public void writeUsers() {
+        String[] tempList = new String[(users.size())];
+        users.toArray(tempList);
+        for (String token:tempList) {
+           chatTextArea.append(token);
+        }
     }
     
     public void disconnect(){
         try {
             sock.close();
+            loginTextPanel.setEnabled(true);
+            adressTextPanel.setEnabled(true);
+            portTextPanel.setEnabled(true);
             chatTextArea.append("Disconnected\n");
         } catch (IOException ex) {
             chatTextArea.append("Failed to disconnect");
@@ -38,8 +54,40 @@ public class chatClient extends javax.swing.JFrame {
             InputStreamReader streamreader = new InputStreamReader(sock.getInputStream());
             reader = new BufferedReader(streamreader);
             writer = new PrintWriter(sock.getOutputStream());
+            loginTextPanel.setEnabled(false);
+            adressTextPanel.setEnabled(false);
+            portTextPanel.setEnabled(false);
         } catch (Exception e) {
             chatTextArea.append("Cannot connect\n");
+        }
+    }
+    
+        public class IncomingReader implements Runnable{
+        @Override
+        public void run(){
+            String stream, done = "Done", connect = "Connect", disconnect = "Disconnect", chat = "Chat";
+            String[] data;
+
+            try {
+                while ((stream = reader.readLine()) != null) {
+                    data = stream.split(":");
+
+                    if (data[2].equals(chat)){
+                        chatTextArea.append(data[0] + ": " + data[1] + "\n");
+                        chatTextArea.setCaretPosition(chatTextArea.getDocument().getLength());
+                    } else if (data[2].equals(connect)) {
+                        chatTextArea.removeAll();
+                        userAdd(data[0]);
+                    } else if (data[2].equals(disconnect)) {
+                        userRemove(data[0]);
+                    } else if (data[2].equals(done)) {
+                        writeUsers();
+                        users.clear();
+                    }
+                }
+           } catch(Exception ex) { 
+           
+           }
         }
     }
     
@@ -78,8 +126,10 @@ public class chatClient extends javax.swing.JFrame {
 
         jScrollPane2.setViewportView(loginTextPanel);
 
+        portTextPanel.setText("1111");
         jScrollPane3.setViewportView(portTextPanel);
 
+        adressTextPanel.setText("localhost");
         jScrollPane4.setViewportView(adressTextPanel);
 
         writeTextArea.setColumns(20);
@@ -171,6 +221,7 @@ public class chatClient extends javax.swing.JFrame {
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         // TODO add your handling code here:
+        connect();
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
@@ -196,10 +247,7 @@ public class chatClient extends javax.swing.JFrame {
         // TODO add your handling code here:
         disconnect();
     }//GEN-LAST:event_disconnectButtonActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
+  
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

@@ -23,14 +23,10 @@ public class chatServer extends javax.swing.JFrame {
                 sock = clientSocket;
                 InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
                 reader = new BufferedReader(isReader);
-            }
-            catch (Exception ex) 
-            {
+            } catch (Exception ex) {
                 serverTextArea.append("Unexpected error... \n");
             }
-
        }
-
        @Override
        public void run(){
             String message, connect = "Connect", disconnect = "Disconnect", chat = "Chat" ;
@@ -97,6 +93,7 @@ public class chatServer extends javax.swing.JFrame {
     public void removeUser(String user){
         users.remove(user);
         serverTextArea.append("User " + user + "disconnected...");
+        tellEveryone(user + " " + "disconnected.");
     }
     
     public void writeUsers(){
