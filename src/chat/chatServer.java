@@ -32,8 +32,7 @@ public class chatServer extends javax.swing.JFrame {
        }
 
        @Override
-       public void run() 
-       {
+       public void run(){
             String message, connect = "Connect", disconnect = "Disconnect", chat = "Chat" ;
             String[] data;
 
@@ -85,6 +84,10 @@ public class chatServer extends javax.swing.JFrame {
                     serverTextArea.append("Error making a connection. \n");
                 }
             }
+    }
+    
+    public void clearChat(){
+        serverTextArea.setText("");
     }
     
     public void addUser(String user){
@@ -150,6 +153,11 @@ public class chatServer extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         clearButton.setText("Clear");
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
+        });
 
         onlineUsersButton.setText("Online users");
         onlineUsersButton.addActionListener(new java.awt.event.ActionListener() {
@@ -235,6 +243,10 @@ public class chatServer extends javax.swing.JFrame {
         tellEveryone("Server:is stopping and all users will be disconnected.\n:Chat");
         serverTextArea.append("Server stopping... \n");
     }//GEN-LAST:event_stopButtonActionPerformed
+
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        clearChat();
+    }//GEN-LAST:event_clearButtonActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {

@@ -180,7 +180,7 @@ public class chatClient extends javax.swing.JFrame {
             writeTextArea.requestFocus();
         } else {
             try {
-               writer.println(chatTextArea.getText() + ":" + "Chat");
+                writer.println(chatTextArea.getText() + ":" + "Chat");
             } catch (Exception ex) {
                 chatTextArea.append("Message was not sent. \n");
             }
