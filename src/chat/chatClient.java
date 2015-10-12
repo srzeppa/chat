@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 public class chatClient extends javax.swing.JFrame {
     
     ArrayList<String> users = new ArrayList();
-    String address = "localhost";
-    int port = 1111;
+    String address;
+    int port;
     PrintWriter writer;
     Socket sock;
     BufferedReader reader;
@@ -50,13 +50,14 @@ public class chatClient extends javax.swing.JFrame {
     
     public void connect(){
         try{
-            sock = new Socket(address, port);
+            sock = new Socket(adressTextPanel.getText(), Integer.parseInt(portTextPanel.getText()));
             InputStreamReader streamreader = new InputStreamReader(sock.getInputStream());
             reader = new BufferedReader(streamreader);
             writer = new PrintWriter(sock.getOutputStream());
             loginTextPanel.setEnabled(false);
             adressTextPanel.setEnabled(false);
             portTextPanel.setEnabled(false);
+            chatTextArea.append("Connected\n");
         } catch (Exception e) {
             chatTextArea.append("Cannot connect\n");
         }
