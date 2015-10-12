@@ -93,7 +93,7 @@ public class chatServer extends javax.swing.JFrame {
     
     public void removeUser(String user){
         users.remove(user);
-        serverTextArea.append("User "+user+"disconnected...");
+        serverTextArea.append("User " + user + "disconnected...");
     }
     
     public void writeUsers(){
