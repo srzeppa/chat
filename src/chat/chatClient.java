@@ -54,6 +54,7 @@ public class chatClient extends javax.swing.JFrame {
             InputStreamReader streamreader = new InputStreamReader(sock.getInputStream());
             reader = new BufferedReader(streamreader);
             writer = new PrintWriter(sock.getOutputStream());
+            userAdd(loginTextPanel.getText());
             loginTextPanel.setEnabled(false);
             adressTextPanel.setEnabled(false);
             portTextPanel.setEnabled(false);
