@@ -13,8 +13,7 @@ public class chatServer extends javax.swing.JFrame {
     ArrayList clientOutputStreams;
     ArrayList<String> users = new ArrayList();
     
-    public class ClientHandler implements Runnable	
-   {
+    public class ClientHandler implements Runnable{
        BufferedReader reader;
        Socket sock;
        PrintWriter client;
@@ -33,18 +32,14 @@ public class chatServer extends javax.swing.JFrame {
 
        @Override
        public void run() {
-            String message, connect = "Connect", disconnect = "Disconnect", chat = "Chat" ;
-            String[] data;
+            String message;
 
-            try 
-            {
-                while ((message = reader.readLine()) != null) 
-                {
+            try {
+                while ((message = reader.readLine()) != null) {
                     serverTextArea.append("Received: " + message + "\n");
-                } 
-             } 
-             catch (Exception ex) 
-             {
+                    tellEveryone(message);
+                }
+             } catch (Exception ex) {
                 serverTextArea.append("Lost a connection. \n");
                 ex.printStackTrace();
                 clientOutputStreams.remove(client);
@@ -65,10 +60,10 @@ public class chatServer extends javax.swing.JFrame {
 
                         Thread listener = new Thread(new ClientHandler(clientSock, writer));
                         listener.start();
-                        serverTextArea.append("Got a connection. \n");
                     }
                 }catch (Exception ex){
                     serverTextArea.append("Error making a connection. \n");
+                    ex.printStackTrace();
                 }
             }
     }
@@ -76,8 +71,6 @@ public class chatServer extends javax.swing.JFrame {
     public void clearChat(){
         serverTextArea.setText("");
     }
-    
-
     
     public void writeUsers(){
         ArrayList<String> users = new ArrayList<String>();
@@ -103,6 +96,7 @@ public class chatServer extends javax.swing.JFrame {
 
             } catch (Exception ex){
 		serverTextArea.append("Error telling everyone. \n");
+                ex.printStackTrace();
             }
         } 
     }
@@ -238,16 +232,13 @@ public class chatServer extends javax.swing.JFrame {
     }//GEN-LAST:event_onlineUsersButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        // TODO add your handling code here:
         Thread starter = new Thread(new ServerStart());
         starter.start();
-        
         serverTextArea.append("Server started...\n");
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
         try {
-            // TODO add your handling code here:
             Thread.sleep(5000);
         } catch (InterruptedException ex) {
             Logger.getLogger(chatServer.class.getName()).log(Level.SEVERE, null, ex);

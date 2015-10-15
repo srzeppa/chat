@@ -13,7 +13,6 @@ public class chatClient extends javax.swing.JFrame {
     ArrayList<String> users = new ArrayList();
     String address, username;
     int port;
-    boolean isConnected;
     
     PrintWriter writer;
     Socket sock;
@@ -46,18 +45,21 @@ public class chatClient extends javax.swing.JFrame {
             portTextPanel.setEnabled(true);
             connectButton.setEnabled(true);
             disconnectButton.setEnabled(false);
+            sendButton.setEnabled(false);
             
             chatTextArea.append("Disconnected\n");
         } catch (IOException ex) {
             chatTextArea.append("Failed to disconnect");
+            ex.printStackTrace();
         }
     }
     
     public void connect(){
-        try{
+        try {
             address = adressTextPanel.getText();
             port = Integer.parseInt(portTextPanel.getText());
             username = loginTextPanel.getText();
+            
             sock = new Socket(address, port);
             InputStreamReader streamreader = new InputStreamReader(sock.getInputStream());
             reader = new BufferedReader(streamreader);
@@ -71,11 +73,12 @@ public class chatClient extends javax.swing.JFrame {
             portTextPanel.setEnabled(false);
             connectButton.setEnabled(false);
             disconnectButton.setEnabled(true);
+            sendButton.setEnabled(true);
             chatTextArea.append(loginTextPanel.getText() + " connected\n");
-        } catch (Exception e) {
+        } catch (Exception ex) {
             chatTextArea.append("Cannot connect\n");
+            ex.printStackTrace();
         }
-        ListenThread();
     }
     
     public void sendDisconnect() {
@@ -94,9 +97,8 @@ public class chatClient extends javax.swing.JFrame {
             writeTextArea.requestFocus();
         } else {
             try {
-               writer.println(username + ":" + writeTextArea.getText() + ":" + "Chat");
-               writer.flush(); // flushes the buffer
-               chatTextArea.append(writeTextArea.getText());
+               writer.println(loginTextPanel.getText() + "___ " + writeTextArea.getText());
+               writer.flush();
             } catch (Exception ex) {
                 chatTextArea.append("Message was not sent. \n");
             }
@@ -108,8 +110,14 @@ public class chatClient extends javax.swing.JFrame {
     public class IncomingReader implements Runnable{
         @Override
         public void run(){
-            String[] data;
-            String stream, done = "Done", connect = "Connect", disconnect = "Disconnect", chat = "Chat";
+            String stream;
+            try {
+                while ((stream = reader.readLine()) != null) {
+                    chatTextArea.append(stream + "\n");
+                }
+            } catch (Exception ex) {
+                chatTextArea.append("ERRRRROR");
+            }
         }
     }
     
@@ -159,6 +167,7 @@ public class chatClient extends javax.swing.JFrame {
         jScrollPane5.setViewportView(writeTextArea);
 
         sendButton.setText("Send");
+        sendButton.setEnabled(false);
         sendButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sendButtonActionPerformed(evt);
@@ -243,8 +252,8 @@ public class chatClient extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-        // TODO add your handling code here:
         connect();
+        ListenThread();
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
@@ -252,7 +261,6 @@ public class chatClient extends javax.swing.JFrame {
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void disconnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectButtonActionPerformed
-        // TODO add your handling code here:
         sendDisconnect();
         disconnect();
     }//GEN-LAST:event_disconnectButtonActionPerformed
