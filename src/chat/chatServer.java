@@ -107,36 +107,27 @@ public class chatServer extends javax.swing.JFrame {
         } 
     }
     
-    public void userAdd (String data) 
-    {
-        String message, add = ": :Connect", done = "Server: :Done", name = data;
-        serverTextArea.append("Before " + name + " added. \n");
+    public void userAdd (String name) {
+        String message;
         users.add(name);
-        serverTextArea.append("After " + name + " added. \n");
         String[] tempList = new String[(users.size())];
-        users.toArray(tempList);
 
-        for (String token:tempList) 
-        {
-            message = (token + add);
+        for (String user:users) {
+            message = (user + "connected");
             tellEveryone(message);
         }
-        tellEveryone(done);
     }
     
-    public void userRemove (String data) 
-    {
-        String message, add = ": :Connect", done = "Server: :Done", name = data;
+    public void userRemove (String name) {
+        String message;
         users.remove(name);
         String[] tempList = new String[(users.size())];
         users.toArray(tempList);
 
-        for (String token:tempList) 
-        {
-            message = (token + add);
+        for (String user:users) {
+            message = (user + "connected");
             tellEveryone(message);
         }
-        tellEveryone(done);
     }
    
     public chatServer() {
