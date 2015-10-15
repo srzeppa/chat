@@ -1,5 +1,6 @@
 package chat;
 
+import java.awt.List;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -12,48 +13,38 @@ public class chatServer extends javax.swing.JFrame {
     ArrayList clientOutputStreams;
     ArrayList<String> users = new ArrayList();
     
-    public class ClientHandler implements Runnable{
+    public class ClientHandler implements Runnable	
+   {
        BufferedReader reader;
        Socket sock;
        PrintWriter client;
 
-       public ClientHandler(Socket clientSocket, PrintWriter user){
+       public ClientHandler(Socket clientSocket, PrintWriter user) {
             client = user;
             try{
                 sock = clientSocket;
                 InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
                 reader = new BufferedReader(isReader);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex){
                 serverTextArea.append("Unexpected error... \n");
             }
        }
+
        @Override
-       public void run(){
+       public void run() {
             String message, connect = "Connect", disconnect = "Disconnect", chat = "Chat" ;
             String[] data;
 
-            try{
-                while ((message = reader.readLine()) != null){
+            try 
+            {
+                while ((message = reader.readLine()) != null) 
+                {
                     serverTextArea.append("Received: " + message + "\n");
-                    data = message.split(":");
-                    
-                    for (String token:data){
-                        serverTextArea.append(token + "\n");
-                    }
-                    
-                    if (data[2].equals(connect)){
-                        tellEveryone((data[0] + ":" + data[1] + ":" + chat));
-                        addUser(data[0]);
-                    } else if (data[2].equals(disconnect)){
-                        tellEveryone((data[0] + ":has disconnected." + ":" + chat));
-                        removeUser(data[0]);
-                    } else if (data[2].equals(chat)){
-                        tellEveryone(message);
-                    } else {
-                        serverTextArea.append("No Conditions were met. \n");
-                    }
                 } 
-             } catch (Exception ex){
+             } 
+             catch (Exception ex) 
+             {
                 serverTextArea.append("Lost a connection. \n");
                 ex.printStackTrace();
                 clientOutputStreams.remove(client);
@@ -86,21 +77,13 @@ public class chatServer extends javax.swing.JFrame {
         serverTextArea.setText("");
     }
     
-    public void addUser(String user){
-        users.add(user);
-    }
-    
-    public void removeUser(String user){
-        users.remove(user);
-        serverTextArea.append("User " + user + "disconnected...");
-        tellEveryone(user + " " + "disconnected.");
-    }
+
     
     public void writeUsers(){
-        String[] tempList = new String[(users.size())];
-        users.toArray(tempList);
+        ArrayList<String> users = new ArrayList<String>();
         if(!users.isEmpty()){
             for(String user : users){
+                int i = users.size();
                 serverTextArea.append(user);
             }
         } else {
@@ -122,6 +105,38 @@ public class chatServer extends javax.swing.JFrame {
 		serverTextArea.append("Error telling everyone. \n");
             }
         } 
+    }
+    
+    public void userAdd (String data) 
+    {
+        String message, add = ": :Connect", done = "Server: :Done", name = data;
+        serverTextArea.append("Before " + name + " added. \n");
+        users.add(name);
+        serverTextArea.append("After " + name + " added. \n");
+        String[] tempList = new String[(users.size())];
+        users.toArray(tempList);
+
+        for (String token:tempList) 
+        {
+            message = (token + add);
+            tellEveryone(message);
+        }
+        tellEveryone(done);
+    }
+    
+    public void userRemove (String data) 
+    {
+        String message, add = ": :Connect", done = "Server: :Done", name = data;
+        users.remove(name);
+        String[] tempList = new String[(users.size())];
+        users.toArray(tempList);
+
+        for (String token:tempList) 
+        {
+            message = (token + add);
+            tellEveryone(message);
+        }
+        tellEveryone(done);
     }
    
     public chatServer() {

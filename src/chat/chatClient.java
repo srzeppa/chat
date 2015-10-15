@@ -1,5 +1,6 @@
 package chat;
 
+import java.awt.List;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -10,8 +11,10 @@ import java.util.logging.Logger;
 public class chatClient extends javax.swing.JFrame {
     
     ArrayList<String> users = new ArrayList();
-    String address;
+    String address, username;
     int port;
+    boolean isConnected;
+    
     PrintWriter writer;
     Socket sock;
     BufferedReader reader;
@@ -22,16 +25,14 @@ public class chatClient extends javax.swing.JFrame {
     }
 
     public void userAdd(String user){
-         users.add(user);
+        users.add(user);
     }
     
     public void userRemove(String user){
-         chatTextArea.append(user + " is now offline.\n");
+        chatTextArea.append(user + " is now offline.\n");
     }
     public void writeUsers() {
-        String[] tempList = new String[(users.size())];
-        users.toArray(tempList);
-        for (String token:tempList) {
+        for (String token:users) {
            chatTextArea.append(token);
         }
     }
@@ -39,9 +40,13 @@ public class chatClient extends javax.swing.JFrame {
     public void disconnect(){
         try {
             sock.close();
+            userRemove(loginTextPanel.getText());
             loginTextPanel.setEnabled(true);
             adressTextPanel.setEnabled(true);
             portTextPanel.setEnabled(true);
+            connectButton.setEnabled(true);
+            disconnectButton.setEnabled(false);
+            
             chatTextArea.append("Disconnected\n");
         } catch (IOException ex) {
             chatTextArea.append("Failed to disconnect");
@@ -50,46 +55,90 @@ public class chatClient extends javax.swing.JFrame {
     
     public void connect(){
         try{
-            sock = new Socket(adressTextPanel.getText(), Integer.parseInt(portTextPanel.getText()));
+            address = adressTextPanel.getText();
+            port = Integer.parseInt(portTextPanel.getText());
+            username = loginTextPanel.getText();
+            sock = new Socket(address, port);
             InputStreamReader streamreader = new InputStreamReader(sock.getInputStream());
             reader = new BufferedReader(streamreader);
             writer = new PrintWriter(sock.getOutputStream());
+            writer.println(username + " connected!");
+            writer.flush(); 
+            
             userAdd(loginTextPanel.getText());
             loginTextPanel.setEnabled(false);
             adressTextPanel.setEnabled(false);
             portTextPanel.setEnabled(false);
-            chatTextArea.append("Connected\n");
+            connectButton.setEnabled(false);
+            disconnectButton.setEnabled(true);
+            chatTextArea.append(loginTextPanel.getText() + " connected\n");
         } catch (Exception e) {
             chatTextArea.append("Cannot connect\n");
         }
+        ListenThread();
     }
     
-        public class IncomingReader implements Runnable{
+    public void sendDisconnect() {
+        try {
+            writer.println(username + " disconnected"); 
+            writer.flush(); 
+        } catch (Exception e) {
+            chatTextArea.append("Could not send Disconnect message.\n");
+        }
+    }
+    
+    public void send(){
+        String nothing = "";
+        if ((writeTextArea.getText()).equals(nothing)) {
+            writeTextArea.setText("");
+            writeTextArea.requestFocus();
+        } else {
+            try {
+               writer.println(username + ":" + writeTextArea.getText() + ":" + "Chat");
+               writer.flush(); // flushes the buffer
+               chatTextArea.append(writeTextArea.getText());
+            } catch (Exception ex) {
+                chatTextArea.append("Message was not sent. \n");
+            }
+            writeTextArea.setText("");
+            writeTextArea.requestFocus();
+        }
+    }
+    
+    public class IncomingReader implements Runnable{
         @Override
         public void run(){
-            String stream, done = "Done", connect = "Connect", disconnect = "Disconnect", chat = "Chat";
             String[] data;
+            String stream, done = "Done", connect = "Connect", disconnect = "Disconnect", chat = "Chat";
 
-            try {
-                while ((stream = reader.readLine()) != null) {
-                    data = stream.split(":");
+            try 
+            {
+                while ((stream = reader.readLine()) != null) 
+                {
+                     data = stream.split(":");
 
-                    if (data[2].equals(chat)){
+                     if (data[2].equals(chat)) 
+                     {
                         chatTextArea.append(data[0] + ": " + data[1] + "\n");
                         chatTextArea.setCaretPosition(chatTextArea.getDocument().getLength());
-                    } else if (data[2].equals(connect)) {
+                     } 
+                     else if (data[2].equals(connect))
+                     {
                         chatTextArea.removeAll();
                         userAdd(data[0]);
-                    } else if (data[2].equals(disconnect)) {
-                        userRemove(data[0]);
-                    } else if (data[2].equals(done)) {
+                     } 
+                     else if (data[2].equals(disconnect)) 
+                     {
+                         userRemove(data[0]);
+                     } 
+                     else if (data[2].equals(done)) 
+                     {
+                        //users.setText("");
                         writeUsers();
                         users.clear();
-                    }
+                     }
                 }
-           } catch(Exception ex) { 
-           
-           }
+           }catch(Exception ex) { }
         }
     }
     
@@ -153,6 +202,7 @@ public class chatClient extends javax.swing.JFrame {
         });
 
         disconnectButton.setText("Disconnect");
+        disconnectButton.setEnabled(false);
         disconnectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 disconnectButtonActionPerformed(evt);
@@ -227,54 +277,16 @@ public class chatClient extends javax.swing.JFrame {
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
-                String nothing = "";
-        if ((writeTextArea.getText()).equals(nothing)) {
-            writeTextArea.setText("");
-            writeTextArea.requestFocus();
-        } else {
-            try {
-                writer.println(chatTextArea.getText() + ":" + "Chat");
-            } catch (Exception ex) {
-                chatTextArea.append("Message was not sent. \n");
-            }
-            writeTextArea.setText("");
-            writeTextArea.requestFocus();
-        }
-
-        writeTextArea.setText("");
-        writeTextArea.requestFocus();
+        send();
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void disconnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectButtonActionPerformed
         // TODO add your handling code here:
+        sendDisconnect();
         disconnect();
     }//GEN-LAST:event_disconnectButtonActionPerformed
   
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(chatClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(chatClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(chatClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(chatClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new chatClient().setVisible(true);
