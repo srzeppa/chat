@@ -118,39 +118,33 @@ public class chatLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_loginTextFieldActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        boolean isGood = true;
         int i = 0;
         String login = loginTextField.getText();
-        ArrayList <String> allLogins = new ArrayList<>();
         String password = new String(passwordField.getPassword());
-        String sqlRegister = "INSERT INTO users(login, password) VALUES ('" + login + "','" + password + "');";
-        String sqlSearchLogins = "SELECT login FROM users;";
+        String passwordFromDatabase = null;
        
         try {
-            ResultSet rs = statement.executeQuery(sqlSearchLogins);
-            while(rs.next()){
-                allLogins.add(rs.getString(1));
-            }
+            ResultSet rspassword = statement.executeQuery("SELECT password FROM users WHERE login = '" + login +"';");
+            rspassword.next();
+            passwordFromDatabase = rspassword.getString(1);
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            //celowe wywalenie Printa, bo jesli nie ma loginu w bazie, wyrzuca ten blad a my wyswietlamy komunikat
         }
         
-        for(i=0;i<allLogins.size();i++){
-            if((allLogins.get(i)).equals(login)){
-                isGood = false;
-                loginInDatabase.setVisible(true);
-                break;
-            } else {
-                isGood = true;
-            }
-        }
-        if(isGood == true){
+        if((password).equals(passwordFromDatabase)){
+            chatClient cc = new chatClient();
+            cc.setVisible(true);
             try {
-                statement.executeUpdate(sqlRegister);
+                connection.close();
+                
             } catch (SQLException ex) {
                 Logger.getLogger(chatLogin.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("ZALOGOWANO");
+            loginInDatabase.setVisible(false);
+        } else {
+            loginInDatabase.setText("Password/login incorrect. Try again or register.");
+            loginInDatabase.setForeground(Color.red);
+            loginInDatabase.setVisible(true);
         }
     }//GEN-LAST:event_loginButtonActionPerformed
 
