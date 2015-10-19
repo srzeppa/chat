@@ -72,10 +72,9 @@ public class chatServer extends javax.swing.JFrame {
         serverTextArea.setText("");
     }
     
-    public void writeUsers(){
-        ArrayList<String> users = new ArrayList<String>();
-        if(!users.isEmpty()){
-            for(String user : users){
+    public void writeUsers(ArrayList<String> allUsers){
+        if(!allUsers.isEmpty()){
+            for(String user : allUsers){
                 int i = users.size();
                 serverTextArea.append(user);
             }
@@ -228,7 +227,9 @@ public class chatServer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void onlineUsersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onlineUsersButtonActionPerformed
-        writeUsers();
+        chatClient cc = new chatClient();
+        ArrayList<String> users = cc.getAllUsers();
+        writeUsers(users);
     }//GEN-LAST:event_onlineUsersButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed

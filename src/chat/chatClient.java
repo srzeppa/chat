@@ -30,17 +30,19 @@ public class chatClient extends javax.swing.JFrame {
     public void userRemove(String user){
         chatTextArea.append(user + " is now offline.\n");
     }
-    public void writeUsers() {
-        for (String token:users) {
-           chatTextArea.append(token);
-        }
+    
+    public ArrayList<String> getAllUsers(){
+        return users;
+    }
+    
+    public void setChatLogin(String login){
+        loginTextPanel.setText(login);
     }
     
     public void disconnect(){
         try {
             sock.close();
             userRemove(loginTextPanel.getText());
-            loginTextPanel.setEnabled(true);
             adressTextPanel.setEnabled(true);
             portTextPanel.setEnabled(true);
             connectButton.setEnabled(true);
@@ -68,13 +70,11 @@ public class chatClient extends javax.swing.JFrame {
             writer.flush(); 
             
             userAdd(loginTextPanel.getText());
-            loginTextPanel.setEnabled(false);
             adressTextPanel.setEnabled(false);
             portTextPanel.setEnabled(false);
             connectButton.setEnabled(false);
             disconnectButton.setEnabled(true);
             sendButton.setEnabled(true);
-            chatTextArea.append(loginTextPanel.getText() + " connected\n");
         } catch (Exception ex) {
             chatTextArea.append("Cannot connect\n");
             ex.printStackTrace();
@@ -116,7 +116,7 @@ public class chatClient extends javax.swing.JFrame {
                     chatTextArea.append(stream + "\n");
                 }
             } catch (Exception ex) {
-                chatTextArea.append("ERRRRROR");
+                ex.printStackTrace();
             }
         }
     }
@@ -154,6 +154,7 @@ public class chatClient extends javax.swing.JFrame {
 
         jLabel2.setText("Adress:");
 
+        loginTextPanel.setEnabled(false);
         jScrollPane2.setViewportView(loginTextPanel);
 
         portTextPanel.setText("1111");

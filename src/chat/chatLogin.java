@@ -12,6 +12,77 @@ public class chatLogin extends javax.swing.JFrame {
     private String url = "jdbc:hsqldb:hsql://localhost/workdb";
     private Statement statement;
     
+    public String login(){
+        int i = 0;
+        String login = loginTextField.getText();
+        String password = new String(passwordField.getPassword());
+        String passwordFromDatabase = null;
+       
+        try {
+            ResultSet rspassword = statement.executeQuery("SELECT password FROM users WHERE login = '" + login +"';");
+            rspassword.next();
+            passwordFromDatabase = rspassword.getString(1);
+        } catch (SQLException ex) {
+            //celowe wywalenie Printa, bo jesli nie ma loginu w bazie, wyrzuca ten blad a my wyswietlamy komunikat
+        }
+        
+        if((password).equals(passwordFromDatabase)){
+            chatClient cc = new chatClient();
+            cc.setVisible(true);
+            cc.setChatLogin(login);
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(chatLogin.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            loginInDatabase.setVisible(false);
+        } else {
+            loginInDatabase.setText("Password/login incorrect. Try again or register.");
+            loginInDatabase.setForeground(Color.red);
+            loginInDatabase.setVisible(true);
+        }
+        return loginTextField.getText();
+    }
+    
+    public void register(){
+        boolean isFree = true;
+        int i = 0;
+        String login = loginTextField.getText();
+        ArrayList <String> allLogins = new ArrayList<>();
+        String password = new String(passwordField.getPassword());
+        String sqlRegister = "INSERT INTO users(login, password) VALUES ('" + login + "','" + password + "');";
+        String sqlSearchLogins = "SELECT login FROM users;";
+       
+        try {
+            ResultSet rs = statement.executeQuery(sqlSearchLogins);
+            while(rs.next()){
+                allLogins.add(rs.getString(1));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        
+        for(i=0;i<allLogins.size();i++){
+            if((allLogins.get(i)).equals(login)){
+                isFree = false;
+                loginInDatabase.setVisible(true);
+                break;
+            } else {
+                isFree = true;
+            }
+        }
+        if(isFree == true){
+            try {
+                statement.executeUpdate(sqlRegister);
+            } catch (SQLException ex) {
+                Logger.getLogger(chatLogin.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            loginInDatabase.setText("You are registered. Please log in now.");
+            loginInDatabase.setForeground(Color.green);
+            loginInDatabase.setVisible(true);
+        }
+    }
+    
     public chatLogin() {
         try {
             connection = DriverManager.getConnection(url,"SA","");
@@ -118,73 +189,11 @@ public class chatLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_loginTextFieldActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        int i = 0;
-        String login = loginTextField.getText();
-        String password = new String(passwordField.getPassword());
-        String passwordFromDatabase = null;
-       
-        try {
-            ResultSet rspassword = statement.executeQuery("SELECT password FROM users WHERE login = '" + login +"';");
-            rspassword.next();
-            passwordFromDatabase = rspassword.getString(1);
-        } catch (SQLException ex) {
-            //celowe wywalenie Printa, bo jesli nie ma loginu w bazie, wyrzuca ten blad a my wyswietlamy komunikat
-        }
-        
-        if((password).equals(passwordFromDatabase)){
-            chatClient cc = new chatClient();
-            cc.setVisible(true);
-            try {
-                connection.close();
-                
-            } catch (SQLException ex) {
-                Logger.getLogger(chatLogin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            loginInDatabase.setVisible(false);
-        } else {
-            loginInDatabase.setText("Password/login incorrect. Try again or register.");
-            loginInDatabase.setForeground(Color.red);
-            loginInDatabase.setVisible(true);
-        }
+        login();
     }//GEN-LAST:event_loginButtonActionPerformed
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
-        boolean isFree = true;
-        int i = 0;
-        String login = loginTextField.getText();
-        ArrayList <String> allLogins = new ArrayList<>();
-        String password = new String(passwordField.getPassword());
-        String sqlRegister = "INSERT INTO users(login, password) VALUES ('" + login + "','" + password + "');";
-        String sqlSearchLogins = "SELECT login FROM users;";
-       
-        try {
-            ResultSet rs = statement.executeQuery(sqlSearchLogins);
-            while(rs.next()){
-                allLogins.add(rs.getString(1));
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        
-        for(i=0;i<allLogins.size();i++){
-            if((allLogins.get(i)).equals(login)){
-                isFree = false;
-                loginInDatabase.setVisible(true);
-                break;
-            } else {
-                isFree = true;
-            }
-        }
-        if(isFree == true){
-            try {
-                statement.executeUpdate(sqlRegister);
-            } catch (SQLException ex) {
-                Logger.getLogger(chatLogin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            loginInDatabase.setText("You are registered. Please log in now.");
-            loginInDatabase.setForeground(Color.green);
-            loginInDatabase.setVisible(true);
-        }
+        register();
     }//GEN-LAST:event_registerButtonActionPerformed
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
