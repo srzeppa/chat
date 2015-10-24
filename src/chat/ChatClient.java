@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ChatClient extends javax.swing.JFrame {
     
@@ -13,6 +15,7 @@ public class ChatClient extends javax.swing.JFrame {
     private PrintWriter writer;
     private Socket sock;
     private BufferedReader reader;
+    public static String login;
     
     public void listenThread(){
         Thread IncomingReader = new Thread(new IncomingReader());
@@ -31,8 +34,7 @@ public class ChatClient extends javax.swing.JFrame {
             connectButton.setEnabled(true);
             disconnectButton.setEnabled(false);
             sendButton.setEnabled(false);
-            
-            chatTextArea.append("Disconnected\n");
+            Thread.currentThread().interrupt();
         } catch (IOException ex) {
             chatTextArea.append("Failed to disconnect");
             ex.printStackTrace();
@@ -79,8 +81,8 @@ public class ChatClient extends javax.swing.JFrame {
             writeTextArea.requestFocus();
         } else {
             try {
-               writer.println(loginTextPanel.getText() + "___ " + writeTextArea.getText());
-               writer.flush();
+                writer.println(loginTextPanel.getText() + "___ " + writeTextArea.getText());
+                writer.flush();
             } catch (Exception ex) {
                 chatTextArea.append("Message was not sent. \n");
             }
@@ -105,6 +107,7 @@ public class ChatClient extends javax.swing.JFrame {
     
     public ChatClient() {
         initComponents();
+        login = loginTextPanel.getText();
     }
 
     @SuppressWarnings("unchecked")

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 public class ChatLogin extends javax.swing.JFrame {
     
     private Connection connection;
-    private String url = "jdbc:hsqldb:hsql://localhost/workdb";
+    private final String URL = "jdbc:hsqldb:hsql://localhost/workdb";
     private Statement statement;
     private ResultSet rspassword;
     private ResultSet rs;
@@ -26,7 +26,7 @@ public class ChatLogin extends javax.swing.JFrame {
         databaseThread = new Thread();
         try {
             databaseThread.start();
-            connection = DriverManager.getConnection(url,"SA","");
+            connection = DriverManager.getConnection(URL,"SA","");
             statement = connection.createStatement();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -63,6 +63,12 @@ public class ChatLogin extends javax.swing.JFrame {
             loginInDatabase.setVisible(true);
         }
         databaseThread.interrupt();
+    }
+    
+    public String getLogin(){
+        String login;
+        login = loginTextField.getText();
+        return login;
     }
     
     private void register(){

@@ -6,7 +6,9 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +18,7 @@ public class ChatServer extends javax.swing.JFrame {
     private Thread starter;
     private int port;
     private Iterator it;
+    private List<String> users = new ArrayList<>();
     
     public ChatServer() {
         initComponents();
@@ -23,6 +26,12 @@ public class ChatServer extends javax.swing.JFrame {
     
     public void setServerTextArea(String text){
         serverTextArea.append(text);
+    }
+    
+    public void writeUsers(){
+        for(String user : users){
+            serverTextArea.append(user + "\n");
+        }
     }
     
     public class ServerStart implements Runnable{
@@ -40,12 +49,14 @@ public class ChatServer extends javax.swing.JFrame {
                     clientSock = serverSock.accept();
                     writer = new PrintWriter(clientSock.getOutputStream());
                     clientOutputStreams.add(writer);
-
                     listener = new Thread(new ClientHandler(clientSock, writer, chat.ChatServer.this));
                     listener.start();
+                    synchronized (users){
+                        Iterator<String> iterator = users.iterator();
+                        users.add(ChatClient.login);
+                    }
                 }
             } catch (Exception ex) {
-                serverTextArea.append("Error making a connection. \n");
                 ex.printStackTrace();
             }
         }
@@ -171,18 +182,20 @@ public class ChatServer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void onlineUsersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onlineUsersButtonActionPerformed
-
+        writeUsers();
     }//GEN-LAST:event_onlineUsersButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         starter = new Thread(new ServerStart());
         starter.start();
         serverTextArea.append("Server started...\n");
+        startButton.setEnabled(false);
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
-        starter.interrupt();
+        Thread.currentThread().interrupt();
         serverTextArea.append("Server stopping... \n");
+        startButton.setEnabled(true);
     }//GEN-LAST:event_stopButtonActionPerformed
 
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
