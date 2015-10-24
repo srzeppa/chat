@@ -21,36 +21,8 @@ public class ChatServer extends javax.swing.JFrame {
         initComponents();
     }
     
-    public class ClientHandler implements Runnable{
-        private BufferedReader reader;
-        private Socket sock;
-        private PrintWriter client;
-
-        public ClientHandler(Socket clientSocket, PrintWriter user) {
-            client = user;
-            try{
-                sock = clientSocket;
-                InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
-                reader = new BufferedReader(isReader);
-            }
-            catch (Exception ex){
-                serverTextArea.append("Unexpected error... \n");
-            }
-        }
-
-        @Override
-        public void run() {
-            String message;
-            try {
-                while ((message = reader.readLine()) != null) {
-                    serverTextArea.append("Received: " + message + "\n");
-                    tellEveryone(message);
-                }
-            } catch (Exception ex) {
-               serverTextArea.append("Lost a connection. \n");
-               ex.printStackTrace();
-            } 
-	} 
+    public void setServerTextArea(String text){
+        serverTextArea.append(text);
     }
     
     public class ServerStart implements Runnable{
@@ -69,7 +41,7 @@ public class ChatServer extends javax.swing.JFrame {
                     writer = new PrintWriter(clientSock.getOutputStream());
                     clientOutputStreams.add(writer);
 
-                    listener = new Thread(new ClientHandler(clientSock, writer));
+                    listener = new Thread(new ClientHandler(clientSock, writer, chat.ChatServer.this));
                     listener.start();
                 }
             } catch (Exception ex) {

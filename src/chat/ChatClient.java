@@ -10,7 +10,6 @@ public class ChatClient extends javax.swing.JFrame {
     
     private String address, username;
     private int port;
-    
     private PrintWriter writer;
     private Socket sock;
     private BufferedReader reader;
