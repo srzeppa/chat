@@ -3,6 +3,7 @@ package chat;
 import java.awt.Color;
 import java.beans.Statement;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,12 +17,28 @@ public class ChatLogin extends javax.swing.JFrame {
     private Statement statement;
     private ResultSet rspassword;
     private ResultSet rs;
+    private String login;
+    private String password;
+    private String passwordFromDatabase;
+    private Thread databaseThread;
     
-    private String login(){
+        public ChatLogin() {
+            login = loginTextField.getText();
+            password = new String(passwordField.getPassword());
+            databaseThread = new Thread();
+            try {
+                databaseThread.start();
+                connection = DriverManager.getConnection(url,"SA","");
+                statement = (Statement) connection.createStatement();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            initComponents();
+            loginInDatabase.setVisible(false);
+        }
+    
+    private void login(){
         int i = 0;
-        String login = loginTextField.getText();
-        String password = new String(passwordField.getPassword());
-        String passwordFromDatabase = null;
        
         try {
             rspassword = statement.executeQuery("SELECT password FROM users WHERE login = '" + login +"';");
@@ -46,15 +63,13 @@ public class ChatLogin extends javax.swing.JFrame {
             loginInDatabase.setForeground(Color.red);
             loginInDatabase.setVisible(true);
         }
-        return loginTextField.getText();
+        databaseThread.interrupt();
     }
     
     private void register(){
         boolean isFree = true;
         int i = 0;
-        String login = loginTextField.getText();
         ArrayList <String> allLogins = new ArrayList<>();
-        String password = new String(passwordField.getPassword());
         String sqlRegister = "INSERT INTO users(login, password) VALUES ('" + login + "','" + password + "');";
         String sqlSearchLogins = "SELECT login FROM users;";
        
@@ -86,17 +101,6 @@ public class ChatLogin extends javax.swing.JFrame {
             loginInDatabase.setForeground(Color.green);
             loginInDatabase.setVisible(true);
         }
-    }
-    
-    public ChatLogin() {
-        try {
-            connection = DriverManager.getConnection(url,"SA","");
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        initComponents();
-        loginInDatabase.setVisible(false);
     }
 
     @SuppressWarnings("unchecked")
