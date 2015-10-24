@@ -1,11 +1,11 @@
 package chat;
 
 import java.awt.Color;
-import java.beans.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,24 +22,23 @@ public class ChatLogin extends javax.swing.JFrame {
     private String passwordFromDatabase;
     private Thread databaseThread;
     
-        public ChatLogin() {
-            login = loginTextField.getText();
-            password = new String(passwordField.getPassword());
-            databaseThread = new Thread();
-            try {
-                databaseThread.start();
-                connection = DriverManager.getConnection(url,"SA","");
-                statement = (Statement) connection.createStatement();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            initComponents();
-            loginInDatabase.setVisible(false);
+    public ChatLogin() {
+        databaseThread = new Thread();
+        try {
+            databaseThread.start();
+            connection = DriverManager.getConnection(url,"SA","");
+            statement = connection.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        initComponents();
+        loginInDatabase.setVisible(false);
+    }
     
     private void login(){
         int i = 0;
-       
+        login = loginTextField.getText();
+        password = new String(passwordField.getPassword());
         try {
             rspassword = statement.executeQuery("SELECT password FROM users WHERE login = '" + login +"';");
             rspassword.next();
@@ -69,6 +68,8 @@ public class ChatLogin extends javax.swing.JFrame {
     private void register(){
         boolean isFree = true;
         int i = 0;
+        login = loginTextField.getText();
+        password = new String(passwordField.getPassword());
         ArrayList <String> allLogins = new ArrayList<>();
         String sqlRegister = "INSERT INTO users(login, password) VALUES ('" + login + "','" + password + "');";
         String sqlSearchLogins = "SELECT login FROM users;";

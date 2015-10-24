@@ -11,11 +11,11 @@ public class ChatClient extends javax.swing.JFrame {
     private String address, username;
     private int port;
     
-    PrintWriter writer;
-    Socket sock;
-    BufferedReader reader;
+    private PrintWriter writer;
+    private Socket sock;
+    private BufferedReader reader;
     
-    public void ListenThread(){
+    public void listenThread(){
         Thread IncomingReader = new Thread(new IncomingReader());
         IncomingReader.start();
     }
@@ -237,7 +237,7 @@ public class ChatClient extends javax.swing.JFrame {
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         connect();
-        ListenThread();
+        listenThread();
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed

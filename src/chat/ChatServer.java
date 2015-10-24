@@ -12,14 +12,21 @@ import java.util.logging.Logger;
 
 public class ChatServer extends javax.swing.JFrame {
 
-    ArrayList clientOutputStreams;
+    private ArrayList clientOutputStreams;
+    private Thread starter;
+    private int port;
+    private Iterator it;
+    
+    public ChatServer() {
+        initComponents();
+    }
     
     public class ClientHandler implements Runnable{
-       BufferedReader reader;
-       Socket sock;
-       PrintWriter client;
+        private BufferedReader reader;
+        private Socket sock;
+        private PrintWriter client;
 
-       public ClientHandler(Socket clientSocket, PrintWriter user) {
+        public ClientHandler(Socket clientSocket, PrintWriter user) {
             client = user;
             try{
                 sock = clientSocket;
@@ -29,44 +36,47 @@ public class ChatServer extends javax.swing.JFrame {
             catch (Exception ex){
                 serverTextArea.append("Unexpected error... \n");
             }
-       }
+        }
 
-       @Override
-       public void run() {
+        @Override
+        public void run() {
             String message;
-
             try {
                 while ((message = reader.readLine()) != null) {
                     serverTextArea.append("Received: " + message + "\n");
                     tellEveryone(message);
                 }
-             } catch (Exception ex) {
-                serverTextArea.append("Lost a connection. \n");
-                ex.printStackTrace();
-                clientOutputStreams.remove(client);
-             } 
+            } catch (Exception ex) {
+               serverTextArea.append("Lost a connection. \n");
+               ex.printStackTrace();
+            } 
 	} 
     }
     
     public class ServerStart implements Runnable{
-            @Override
-            public void run(){
-                clientOutputStreams = new ArrayList();
-                try{
-                    ServerSocket serverSock = new ServerSocket(Integer.parseInt(portTextPanel.getText()));
-                    while(true){
-                        Socket clientSock = serverSock.accept();
-                        PrintWriter writer = new PrintWriter(clientSock.getOutputStream());
-                        clientOutputStreams.add(writer);
+        private Socket clientSock;
+        private PrintWriter writer;
+        private Thread listener;
+        
+        @Override
+        public void run(){
+            clientOutputStreams = new ArrayList();
+            port = Integer.parseInt(portTextPanel.getText());
+            try {
+                ServerSocket serverSock = new ServerSocket(port);
+                while(true){
+                    clientSock = serverSock.accept();
+                    writer = new PrintWriter(clientSock.getOutputStream());
+                    clientOutputStreams.add(writer);
 
-                        Thread listener = new Thread(new ClientHandler(clientSock, writer));
-                        listener.start();
-                    }
-                }catch (Exception ex){
-                    serverTextArea.append("Error making a connection. \n");
-                    ex.printStackTrace();
+                    listener = new Thread(new ClientHandler(clientSock, writer));
+                    listener.start();
                 }
+            } catch (Exception ex) {
+                serverTextArea.append("Error making a connection. \n");
+                ex.printStackTrace();
             }
+        }
     }
     
     public void clearChat(){
@@ -74,7 +84,7 @@ public class ChatServer extends javax.swing.JFrame {
     }
     
     public void tellEveryone(String message){
-	Iterator it = clientOutputStreams.iterator();
+	it = clientOutputStreams.iterator();
         while (it.hasNext()){
             try{
                 PrintWriter writer = (PrintWriter) it.next();
@@ -82,16 +92,11 @@ public class ChatServer extends javax.swing.JFrame {
 		serverTextArea.append("Sending: " + message + "\n");
                 writer.flush();
                 serverTextArea.setCaretPosition(serverTextArea.getDocument().getLength());
-
             } catch (Exception ex){
 		serverTextArea.append("Error telling everyone. \n");
                 ex.printStackTrace();
             }
         } 
-    }
-   
-    public ChatServer() {
-        initComponents();
     }
 
     @SuppressWarnings("unchecked")
@@ -198,18 +203,13 @@ public class ChatServer extends javax.swing.JFrame {
     }//GEN-LAST:event_onlineUsersButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        Thread starter = new Thread(new ServerStart());
+        starter = new Thread(new ServerStart());
         starter.start();
         serverTextArea.append("Server started...\n");
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);
-            serverTextArea.append("Server cant be stopped");
-        }
+        starter.interrupt();
         serverTextArea.append("Server stopping... \n");
     }//GEN-LAST:event_stopButtonActionPerformed
 
