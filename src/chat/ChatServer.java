@@ -1,17 +1,18 @@
 package chat;
 
-import java.awt.List;
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class chatServer extends javax.swing.JFrame {
+public class ChatServer extends javax.swing.JFrame {
 
     ArrayList clientOutputStreams;
-    ArrayList<String> users = new ArrayList();
     
     public class ClientHandler implements Runnable{
        BufferedReader reader;
@@ -72,17 +73,6 @@ public class chatServer extends javax.swing.JFrame {
         serverTextArea.setText("");
     }
     
-    public void writeUsers(ArrayList<String> allUsers){
-        if(!allUsers.isEmpty()){
-            for(String user : allUsers){
-                int i = users.size();
-                serverTextArea.append(user);
-            }
-        } else {
-            serverTextArea.append("No users online.\n");
-        }
-    }
-    
     public void tellEveryone(String message){
 	Iterator it = clientOutputStreams.iterator();
         while (it.hasNext()){
@@ -99,31 +89,8 @@ public class chatServer extends javax.swing.JFrame {
             }
         } 
     }
-    
-    public void userAdd (String name) {
-        String message;
-        users.add(name);
-        String[] tempList = new String[(users.size())];
-
-        for (String user:users) {
-            message = (user + "connected");
-            tellEveryone(message);
-        }
-    }
-    
-    public void userRemove (String name) {
-        String message;
-        users.remove(name);
-        String[] tempList = new String[(users.size())];
-        users.toArray(tempList);
-
-        for (String user:users) {
-            message = (user + "connected");
-            tellEveryone(message);
-        }
-    }
    
-    public chatServer() {
+    public ChatServer() {
         initComponents();
     }
 
@@ -227,9 +194,7 @@ public class chatServer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void onlineUsersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onlineUsersButtonActionPerformed
-        chatClient cc = new chatClient();
-        ArrayList<String> users = cc.getAllUsers();
-        writeUsers(users);
+
     }//GEN-LAST:event_onlineUsersButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
@@ -242,7 +207,7 @@ public class chatServer extends javax.swing.JFrame {
         try {
             Thread.sleep(5000);
         } catch (InterruptedException ex) {
-            Logger.getLogger(chatServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);
             serverTextArea.append("Server cant be stopped");
         }
         serverTextArea.append("Server stopping... \n");
@@ -255,7 +220,7 @@ public class chatServer extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new chatServer().setVisible(true);
+                new ChatServer().setVisible(true);
             }
         });
     }

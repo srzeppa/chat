@@ -1,18 +1,15 @@
 package chat;
 
-import java.awt.List;
-import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
-public class chatClient extends javax.swing.JFrame {
+public class ChatClient extends javax.swing.JFrame {
     
-    ArrayList<String> users = new ArrayList();
-    String address, username;
-    int port;
+    private String address, username;
+    private int port;
     
     PrintWriter writer;
     Socket sock;
@@ -22,18 +19,6 @@ public class chatClient extends javax.swing.JFrame {
         Thread IncomingReader = new Thread(new IncomingReader());
         IncomingReader.start();
     }
-
-    public void userAdd(String user){
-        users.add(user);
-    }
-    
-    public void userRemove(String user){
-        chatTextArea.append(user + " is now offline.\n");
-    }
-    
-    public ArrayList<String> getAllUsers(){
-        return users;
-    }
     
     public void setChatLogin(String login){
         loginTextPanel.setText(login);
@@ -42,7 +27,6 @@ public class chatClient extends javax.swing.JFrame {
     public void disconnect(){
         try {
             sock.close();
-            userRemove(loginTextPanel.getText());
             adressTextPanel.setEnabled(true);
             portTextPanel.setEnabled(true);
             connectButton.setEnabled(true);
@@ -69,7 +53,6 @@ public class chatClient extends javax.swing.JFrame {
             writer.println(username + " connected!");
             writer.flush(); 
             
-            userAdd(loginTextPanel.getText());
             adressTextPanel.setEnabled(false);
             portTextPanel.setEnabled(false);
             connectButton.setEnabled(false);
@@ -121,7 +104,7 @@ public class chatClient extends javax.swing.JFrame {
         }
     }
     
-    public chatClient() {
+    public ChatClient() {
         initComponents();
     }
 
@@ -269,7 +252,7 @@ public class chatClient extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new chatClient().setVisible(true);
+                new ChatClient().setVisible(true);
             }
         });
     }

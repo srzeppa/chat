@@ -1,25 +1,30 @@
 package chat;
 
 import java.awt.Color;
-import java.sql.*;
+import java.beans.Statement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class chatLogin extends javax.swing.JFrame {
+public class ChatLogin extends javax.swing.JFrame {
     
     private Connection connection;
     private String url = "jdbc:hsqldb:hsql://localhost/workdb";
     private Statement statement;
+    private ResultSet rspassword;
+    private ResultSet rs;
     
-    public String login(){
+    private String login(){
         int i = 0;
         String login = loginTextField.getText();
         String password = new String(passwordField.getPassword());
         String passwordFromDatabase = null;
        
         try {
-            ResultSet rspassword = statement.executeQuery("SELECT password FROM users WHERE login = '" + login +"';");
+            rspassword = statement.executeQuery("SELECT password FROM users WHERE login = '" + login +"';");
             rspassword.next();
             passwordFromDatabase = rspassword.getString(1);
         } catch (SQLException ex) {
@@ -27,13 +32,13 @@ public class chatLogin extends javax.swing.JFrame {
         }
         
         if((password).equals(passwordFromDatabase)){
-            chatClient cc = new chatClient();
+            ChatClient cc = new ChatClient();
             cc.setVisible(true);
             cc.setChatLogin(login);
             try {
                 connection.close();
             } catch (SQLException ex) {
-                Logger.getLogger(chatLogin.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ChatLogin.class.getName()).log(Level.SEVERE, null, ex);
             }
             loginInDatabase.setVisible(false);
         } else {
@@ -44,7 +49,7 @@ public class chatLogin extends javax.swing.JFrame {
         return loginTextField.getText();
     }
     
-    public void register(){
+    private void register(){
         boolean isFree = true;
         int i = 0;
         String login = loginTextField.getText();
@@ -54,7 +59,7 @@ public class chatLogin extends javax.swing.JFrame {
         String sqlSearchLogins = "SELECT login FROM users;";
        
         try {
-            ResultSet rs = statement.executeQuery(sqlSearchLogins);
+            rs = statement.executeQuery(sqlSearchLogins);
             while(rs.next()){
                 allLogins.add(rs.getString(1));
             }
@@ -75,7 +80,7 @@ public class chatLogin extends javax.swing.JFrame {
             try {
                 statement.executeUpdate(sqlRegister);
             } catch (SQLException ex) {
-                Logger.getLogger(chatLogin.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ChatLogin.class.getName()).log(Level.SEVERE, null, ex);
             }
             loginInDatabase.setText("You are registered. Please log in now.");
             loginInDatabase.setForeground(Color.green);
@@ -83,7 +88,7 @@ public class chatLogin extends javax.swing.JFrame {
         }
     }
     
-    public chatLogin() {
+    public ChatLogin() {
         try {
             connection = DriverManager.getConnection(url,"SA","");
             statement = connection.createStatement();
@@ -198,7 +203,7 @@ public class chatLogin extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new chatLogin().setVisible(true);
+                new ChatLogin().setVisible(true);
             }
         });
     }
